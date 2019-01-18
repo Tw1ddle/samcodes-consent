@@ -1,0 +1,38 @@
+language: haxe
+
+# Add secure key for Github
+env:
+  global:
+    - secure: sIOJTwAc/KvzMDOHcG84c0spXs/FN8GWX0CO0BAJJm8xtzDRlGU7Eqn2idYpgAHuVr93iEFobxZaxooXkHbd40KoGHG5vI6adUQGTqXtC90p8LovGvmeUDjBpWB8Jlni+OTZbeLd3kBLjXQf26QJvIXZhY9jTU+NwJGJZFJwX6lGKWznjDCMdFteCYedHOIF81XOPN7OK4CG+YhBZiLGGAoXkYH8eBLW14dA3y/gZzmA+1grDhAPc1PggloJHbsOfd27WOXCAx/Q9v5xGdrEfRzQ/q5Yp7nW18CrLP8PczIa3Sb3fZIH+fqUJFZz+bNG2BelFmNuTlCx9A0t5Nr/QfBl1HG1yq/q0DM2sIWJQdEI82Be+wFFMHbjJ7MfcR742V3NeQPQBycs2DdIA0F+Ns6VhC+92heUoOEzFWnOnHz+rpdpmHadZrJm+92DtkNKg/fB2zS3FyvKRl3V9GM9cGp7VRRhHuww+bFub1ONLpqhm85+Olb4fe0xudtHIOCT43j4tknpPCrVsZn3ArRvhiCcqfYbbGPs4/7v6v7Nrh5T1DbXzwuVRAFGWoY9Sbu62l/BQ9RDeesoqdWo/9UqqN4B2BwnyUp8jVexf98I2/eMXRM62bOiyJ4FdjRNw4yBIynkgx476kCj4/y6twNLYfzQrdCKlBG/SCGt+U/pgJ0=
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode9.3
+
+# Get and install nightly hxcpp since 3.4.0 haxelib release is broken for recent iOS
+before_install:
+  - wget http://nmehost.com/releases/hxcpp/hxcpp-3.4.214.zip
+  - haxelib install hxcpp-3.4.214.zip
+
+# Install dependencies
+install:
+  - haxelib install lime
+  - haxelib list
+
+# Build the haxelib ndlls
+script:
+  - pushd project
+  - chmod +x rebuild_ndlls.sh
+  - ./rebuild_ndlls.sh
+  - popd
+
+# Deploy the generated ndlls using Travis builtin GitHub Pages support
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: $TRAVIS_BUILD_DIR/ndll/
+  github_token: $GITHUB_API_KEY
+  keep-history: true
+  on:
+    branch: master

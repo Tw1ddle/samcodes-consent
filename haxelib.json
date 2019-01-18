@@ -1,0 +1,11 @@
+{
+	"name": "samcodes-gdpr-consent",
+	"url": "https://samcodes.co.uk/code/",
+	"license": "MIT",
+	"tags": ["ads","gdpr","android","ios"],
+	"description": "Unofficial Google Mobile Ads Consent SDK support for OpenFL Android and iOS",
+	"version": "1.0.0",
+	"releasenote": "Initial release.",
+	"contributors": ["samcodes"],
+	"dependencies": {}
+}
