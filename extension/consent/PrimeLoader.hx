@@ -1,4 +1,4 @@
-package extension.chartboost;
+package extension.consent;
 
 #if macro
 import haxe.macro.Expr;
@@ -17,6 +17,6 @@ class PrimeLoader {
 	#end
 	
 	public static inline macro function load(inName2:Expr, inSig:Expr) {
-		return macro cpp.Prime.load("samcodeschartboost", $inName2, $inSig, false);
+		return macro cpp.Prime.load("samcodesgdprconsent", $inName2, $inSig, false);
 	}
 }

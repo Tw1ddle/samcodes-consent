@@ -10,11 +10,9 @@ Unofficial Google Mobile Ads Consent SDK support for Haxe OpenFL Android and iOS
 ### Features
 
 Supports:
- * Retrieving the 
+ * Retrieving consent status a user has set for your Google Mobile Ads app.
  * Showing the Google Mobile Ads SDK consent form and recording the user results in Haxe.
  * Customizable listeners for handling Consent SDK events.
-
-If there is something you would like adding please open an issue. Pull requests welcomed too!
 
 ### Install
 
@@ -24,18 +22,19 @@ haxelib git samcodes-gdpr-consent https://github.com/Tw1ddle/samcodes-gdpr-conse
 
 ### Example
 
-See the [demo app](https://github.com/Tw1ddle/samcodes-ads-demo) for a complete example.
+See the [demo app](https://github.com/Tw1ddle/samcodes-ads-demo) for an example.
 
 ![Screenshot of demo app](https://github.com/Tw1ddle/samcodes-ads-demo/blob/master/screenshots/gdpr-consent-popup.png?raw=true "Demo app with GDPR consent popup")
 
 ### Usage
 
-Usage is a multi-stage process, first is getting the user's current consent status:
+Getting the user's current consent status:
 
 ```haxe
 // Extend ConsentListener yourself to handle the onConsentInfoUpdated and onFailedToUpdateConsentInfo callbacks
 // and make the request to determine the status of a user's consent
-Consent.requestStatus(new MyConsentUpdateListener());
+Consent.setConsentListener(new MyConsentListener());
+Consent.requestStatus("your-publisher-id-from-google-ads-dashboard");
 ```
 
 Once we have the current status, next is collecting user consent by displaying a form (if necessary):
@@ -48,10 +47,11 @@ if(!Consent.isRequestLocationInEeaOrUnknown()) {
 
 // Extend ConsentFormListener yourself to handle the onConsentFormLoaded, onConsentFormOpened, onConsentFormClosed and onConsentFormError callbacks
 // Show the Google-rendered consent form
+Consent.setConsentFormListener(new MyConsentFormListener());
 var personalizedAdsOption = true;
 var nonPersonalizedAdsOption = true;
 var adFreeOption = false;
-Consent.showConsentForm("https://www.samcodes.co.uk", new MyConsentFormListener(), personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
+Consent.showConsentForm("https://www.samcodes.co.uk", personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
 ```
 
 Finally, record the consent information from the onConsentFormClosed event as appropriate for your app.
