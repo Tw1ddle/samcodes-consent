@@ -9,9 +9,9 @@
 #include <hx/CFFI.h>
 #include <hx/CFFIPrime.h>
 
-#include "SamcodesChartboost.h"
+#include "SamcodesGdprConsent.h"
 
-using namespace samcodeschartboost;
+using namespace samcodesconsent;
 
 #ifdef IPHONE
 
