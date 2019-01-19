@@ -9,7 +9,7 @@
 #include <hx/CFFI.h>
 #include <hx/CFFIPrime.h>
 
-#include "SamcodesGdprConsent.h"
+#include "SamcodesConsent.h"
 
 using namespace samcodesconsent;
 

@@ -1,7 +1,7 @@
-#ifndef CHARTBOOSTEXT_H
-#define CHARTBOOSTEXT_H
+#ifndef CONSENTEXT_H
+#define CONSENTEXT_H
 
-namespace samcodeschartboost
+namespace samcodesconsent
 {
 	void initChartboost(const char* appId, const char* appSignature);
 	void showInterstitial(const char* location);
@@ -26,3 +26,4 @@ namespace samcodeschartboost
 }
 
 #endif
+

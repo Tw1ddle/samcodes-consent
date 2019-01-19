@@ -1,5 +1,8 @@
 package extension.consent;
 
+/**
+   Enumeration of consent for data use for personalized ads
+**/
 @:enum abstract ConsentStatus(Int) from Int to Int
 {
 	var UNKNOWN = -1;

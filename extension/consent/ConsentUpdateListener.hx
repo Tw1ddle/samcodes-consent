@@ -4,31 +4,25 @@ package extension.consent;
    Customizable listener for responding to GDPR consent update request events.
 **/
 class ConsentUpdateListener {
-	public function onConsentFormLoaded():Void {
+	public function new() {
 	}
 	
-	public function onConsentFormOpened():Void {
+	public function onConsentInfoUpdated(consentStatus:ConsentStatus):Void {
 	}
 	
-	public function onConsentFormClosed(consentStatus:ConsentStatus, userPrefersAdFree:Bool):Void {
-	}
-	
-	public function onConsentFormError(errorDescription:String):Void {
+	public function onFailedToUpdateConsentInfo(errorDescription:String):Void {
 	}
 	
 	// NOTE there are far better ways of doing this
 	#if ios
 	// Interstitial events
-	private static inline var ON_CONSENT_FORM_LOADED:String = "onConsentFormLoaded";
-	private static inline var ON_CONSENT_FORM_OPENED:String = "onConsentFormOpened";
-	private static inline var ON_CONSENT_FORM_CLOSED:String = "onConsentFormClosed";
-	private static inline var ON_CONSENT_FORM_ERROR:String = "onConsentFormError";
+	private static inline var ON_CONSENT_INFO_UPDATED:String = "onConsentInfoUpdated";
+	private static inline var ON_FAILED_TO_UPDATE_CONSENT_INFO:String = "onFailedToUpdateConsentInfo";
 	
 	public function notify(inEvent:Dynamic):Void {
 		var type:String = "";
 		var error:String = "";
 		var consent:ConsentStatus = 0;
-		var userPrefersAdFree:Bool = false;
 
 		if (Reflect.hasField(inEvent, "type")) {
 			type = Std.string (Reflect.field (inEvent, "type"));
@@ -42,22 +36,14 @@ class ConsentUpdateListener {
 			error = Std.string (Reflect.field (inEvent, "error"));
 		}
 		
-		if(Reflect.hasField(inEvent, "prefersadfree")) {
-			userPrefersAdFree = cast (Reflect.field(inEvent, "prefersadfree"));
-		}
-		
 		switch(type) {
-			case ON_CONSENT_FORM_LOADED:
-				onConsentFormLoaded();
-			case ON_CONSENT_FORM_OPENED:
-				onConsentFormOpened();
-			case ON_CONSENT_FORM_CLOSED:
-				onConsentFormClosed(consent, userPrefersAdFree);
-			case ON_CONSENT_FORM_ERROR:
-				onConsentFormError(error);
+			case ON_CONSENT_INFO_UPDATED:
+				onConsentInfoUpdated(consent);
+			case ON_FAILED_TO_UPDATE_CONSENT_INFO:
+				onFailedToUpdateConsentInfo(error);
 			default:
 			{
-				trace("Unhandled GDPR consent update listener event. There shouldn't be any of these. Event type was [" + type + "]");
+				trace("Unhandled GDPR consent form listener event. There shouldn't be any of these. Event type was [" + type + "]");
 			}
 		}
 	}

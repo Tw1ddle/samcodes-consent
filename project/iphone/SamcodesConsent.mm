@@ -3,9 +3,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <UIKit/UIKit.h>
 
-#import "Chartboost.h"
-
-#include "SamcodesChartboost.h"
+#include "SamcodesConsent.h"
 
 extern "C" void sendChartboostEvent(const char* type, const char* location, const char* uri, int reward_coins, int error, bool status);
 
@@ -148,7 +146,7 @@ void queueChartboostEvent(const char* type, const char* location, const char* ur
 
 @end
 
-namespace samcodeschartboost
+namespace samcodesconsent
 {
 	void initChartboost(const char* appId, const char* appSignature)
 	{

@@ -14,6 +14,15 @@ import android.widget.ImageView;
 import org.haxe.extension.Extension;
 import org.haxe.lime.HaxeObject;
 
+import com.google.ads.consent.ConsentForm;
+import com.google.ads.consent.ConsentFormListener;
+import com.google.ads.consent.ConsentInfoUpdateListener;
+import com.google.ads.consent.ConsentInformation;
+import com.google.ads.consent.ConsentStatus;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class ConsentExtension extends Extension
 {
 	private static String TAG = "ConsentExtension";
@@ -21,19 +30,21 @@ public class ConsentExtension extends Extension
 	public static HaxeObject consentUpdateCallback = null;
 	public static HaxeObject consentFormCallback = null;
 	
-	public static void setFormListener(HaxeObject haxeCallback) {
-		Log.i(TAG, "Setting Haxe GDPR Consent form delegate object");
-		consentFormCallback = haxeCallback;
-	}
+	public static ConsentForm consentForm = null;
 	
 	public static void setConsentUpdateListener(HaxeObject haxeCallback) {
-		Log.i(TAG, "Setting Haxe GDPR Consent update listener delegate object");
+		Log.i(TAG, "Setting Haxe GDPR consent update listener delegate object");
 		consentUpdateCallback = haxeCallback;
 	}
 	
+	public static void setConsentFormListener(HaxeObject haxeCallback) {
+		Log.i(TAG, "Setting Haxe GDPR consent form delegate object");
+		consentFormCallback = haxeCallback;
+	}
+	
 	public static void requestStatus(String publisherId) {
-		ConsentInformation consentInformation = ConsentInformation.getInstance(context);
-		String[] publisherIds = { publishserId };
+		ConsentInformation consentInformation = ConsentInformation.getInstance(Extension.mainActivity);
+		String[] publisherIds = { publisherId };
 		consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
 			public void callHaxe(final String name, final Object[] args) {
 				if(consentUpdateCallback != null) {
@@ -44,7 +55,7 @@ public class ConsentExtension extends Extension
 						}
 					});
 				} else {
-					Log.w(TAG, "GDPR Consent consent status listener object is null, ignored a GDPR Consent callback");
+					Log.w(TAG, "GDPR consent status listener object is null, ignored a GDPR consent callback");
 				}
 			}
 			
@@ -60,9 +71,17 @@ public class ConsentExtension extends Extension
 		});
 	}
 	
-	public static void displayConsentForm(String privacyUrl, boolean personalizedAdsOption, boolean nonPersonalizedAdsOption, boolean adFreeOption) {
+	public static void requestConsentForm(String privacyUrl, boolean personalizedAdsOption, boolean nonPersonalizedAdsOption, boolean adFreeOption) {
+		URL privacyUrlObj = null;
 		
-		ConsentForm form = new ConsentForm.Builder(context, privacyUrl).withListener(new ConsentFormListener() {
+		try {
+			privacyUrlObj = new URL(privacyUrl);
+		} catch(MalformedURLException e) {
+			Log.e(TAG, "Malformed URL exception, passed a bad privacy URL, will fail to display consent form");
+			return;
+		}
+		
+		ConsentForm.Builder builder = new ConsentForm.Builder(Extension.mainActivity, privacyUrlObj).withListener(new ConsentFormListener() {
 			public void callHaxe(final String name, final Object[] args) {
 				if(consentFormCallback != null) {
 					callbackHandler.post(new Runnable() {
@@ -72,13 +91,15 @@ public class ConsentExtension extends Extension
 						}
 					});
 				} else {
-					Log.w(TAG, "GDPR Consent consent form listener object is null, ignored a GDPR Consent callback");
+					Log.w(TAG, "GDPR consent form listener object is null, ignored a GDPR consent callback");
 				}
 			}
 			
 			@Override
 			public void onConsentFormLoaded() {
 				callHaxe("onConsentFormLoaded", new Object[]{}); // Consent form loaded successfully.
+				
+				// At this point it is safe to show the form (i.e. call showConsentForm from Haxe)...
 			}
 			
 			@Override
@@ -95,7 +116,7 @@ public class ConsentExtension extends Extension
 				
 				callHaxe("onConsentFormClosed", new Object[] { consent, userPrefersAdFree });
 				
-				setConsentStatus(consentStatus);
+				setConsentStatus(consentToInt(consentStatus));
 			}
 			
 			@Override
@@ -105,17 +126,36 @@ public class ConsentExtension extends Extension
 		});
 		
 		if(personalizedAdsOption) {
-			form.withPersonalizedAdsOption();
+			builder.withPersonalizedAdsOption();
 		}
 		if(nonPersonalizedAdsOption) {
-			form.withNonPersonalizedAdsOption();
+			builder.withNonPersonalizedAdsOption();
 		}
 		if(adFreeOption) {
-			form.withAdFreeOption();
+			builder.withAdFreeOption();
 		}
-		form.build();
-		form.load();
-		form.show();
+		
+		try {
+			consentForm = builder.build();
+			consentForm.load();
+		} catch(Exception e) {
+			Log.e(TAG, "Something went wrong when building or loading the consent form");
+		}
+	}
+	
+	public static boolean displayConsentForm() {
+		if(consentForm == null) {
+			Log.e(TAG, "Failed to display consent form. You must call requestConsentForm and wait to see if it loads first");
+			return false;
+		}
+		
+		try {
+			consentForm.show();
+		} catch(Exception e) {
+			Log.e(TAG, "Something went wrong when trying to show the consent form");
+			return false;
+		}
+		return true;
 	}
 	
 	// NOTE you should only call this after successfully updating the user status
@@ -126,7 +166,7 @@ public class ConsentExtension extends Extension
 	
 	public static int getConsentStatus() {
 		ConsentStatus c = ConsentInformation.getInstance(Extension.mainActivity).getConsentStatus();
-		
+		return consentToInt(c);
 	}
 	
 	public static void setConsentStatus(int consent) {
@@ -134,7 +174,7 @@ public class ConsentExtension extends Extension
 		ConsentInformation.getInstance(Extension.mainActivity).setConsentStatus(intToConsent(consent));
 	}
 	
-	// These values corresponding to an enum abstract in Haxe
+	// These values correspond to an enum abstract in Haxe
 	private static int consentToInt(ConsentStatus consentStatus) {
 		int consent = -1;
 		if(consentStatus == ConsentStatus.UNKNOWN) {
@@ -146,13 +186,13 @@ public class ConsentExtension extends Extension
 		}
 		return consent;
 	}
-	private static intToConsent(int consent) {
+	private static ConsentStatus intToConsent(int consent) {
 		if(consent == -1) {
 			return ConsentStatus.UNKNOWN;
 		} else if(consent == 0) {
-			consent = ConsentStatus.NON_PERSONALIZED;
+			return ConsentStatus.NON_PERSONALIZED;
 		} else if(consent == 1) {
-			consent = ConsentStatus.PERSONALIZED;
+			return ConsentStatus.PERSONALIZED;
 		}
 		return ConsentStatus.UNKNOWN;
 	}

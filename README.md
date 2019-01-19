@@ -10,8 +10,8 @@ Unofficial Google Mobile Ads Consent SDK support for Haxe OpenFL Android and iOS
 ### Features
 
 Supports:
- * Retrieving consent status a user has set for your Google Mobile Ads app.
- * Showing the Google Mobile Ads SDK consent form and recording the user results in Haxe.
+ * Retrieving GDPR/ads consent status a user has set for your app.
+ * Showing the pre-made Google Mobile Ads SDK consent form.
  * Customizable listeners for handling Consent SDK events.
 
 ### Install
@@ -37,24 +37,25 @@ Consent.setConsentListener(new MyConsentListener());
 Consent.requestStatus("your-publisher-id-from-google-ads-dashboard");
 ```
 
-Once we have the current status, next is collecting user consent by displaying a form (if necessary):
+Once we have the current status, if necessary we can request consent by displaying a form:
 
 ```haxe
 
 if(!Consent.isRequestLocationInEeaOrUnknown()) {
-    return; // No need to show consent form to users outside EEA
+    return; // No need to show a GDPR consent form to users outside EEA
 }
 
 // Extend ConsentFormListener yourself to handle the onConsentFormLoaded, onConsentFormOpened, onConsentFormClosed and onConsentFormError callbacks
-// Show the Google-rendered consent form
+// Request the Google-rendered consent form
+// Note, you need to call Consent.showConsentForm() in the onConsentFormLoaded callback to actually show the form.
 Consent.setConsentFormListener(new MyConsentFormListener());
 var personalizedAdsOption = true;
 var nonPersonalizedAdsOption = true;
 var adFreeOption = false;
-Consent.showConsentForm("https://www.samcodes.co.uk", personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
+Consent.requestConsentForm("https://www.samcodes.co.uk", personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
 ```
 
-Finally, record the consent information from the onConsentFormClosed event as appropriate for your app.
+Remember to record the consent response from the onConsentFormClosed callback to savedata (or whatever is appropriate) so you don't have to show the form every time.
 
 ### Notes
 

@@ -11,10 +11,10 @@
 		<compilerflag value="-Iinclude"/>
 		<compilerflag value="-Iinclude/Chartboost.framework/Versions/A/Headers" />
 		
-		<file name="iphone/SamcodesGdprConsent.mm"/>
+		<file name="iphone/SamcodesConsent.mm"/>
 	</files>
 	
-	<target id="NDLL" output="${LIBPREFIX}samcodesgdprconsent${debug_extra}${LIBEXTRA}" tool="linker" toolid="${STD_MODULE_LINK}">
+	<target id="NDLL" output="${LIBPREFIX}samcodesconsent${debug_extra}${LIBEXTRA}" tool="linker" toolid="${STD_MODULE_LINK}">
 		<outdir name="../ndll/${BINDIR}"/>
 		<ext value=".ndll" if="windows || mac || linux"/>
 		<files id="common"/>
