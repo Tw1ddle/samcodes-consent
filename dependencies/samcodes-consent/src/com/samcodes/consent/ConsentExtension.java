@@ -136,7 +136,11 @@ public class ConsentExtension extends Extension
 		
 		try {
 			consentForm = builder.build();
-			consentForm.load();
+			if(consentForm != null) {
+				consentForm.load();
+			} else {
+				Log.e(TAG, "Failed to build the consent form");
+			}
 		} catch(Exception e) {
 			Log.e(TAG, "Something went wrong when building or loading the consent form");
 		}
