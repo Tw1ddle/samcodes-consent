@@ -27,16 +27,15 @@ public class ConsentExtension extends Extension
 {
 	private static String TAG = "ConsentExtension";
 	
-	public static HaxeObject consentUpdateCallback = null;
-	public static HaxeObject consentFormCallback = null;
-	
 	public static ConsentForm consentForm = null;
 	
+	public static HaxeObject consentUpdateCallback = null;
 	public static void setConsentUpdateListener(HaxeObject haxeCallback) {
 		Log.i(TAG, "Setting Haxe GDPR consent update listener delegate object");
 		consentUpdateCallback = haxeCallback;
 	}
 	
+	public static HaxeObject consentFormCallback = null;
 	public static void setConsentFormListener(HaxeObject haxeCallback) {
 		Log.i(TAG, "Setting Haxe GDPR consent form delegate object");
 		consentFormCallback = haxeCallback;
