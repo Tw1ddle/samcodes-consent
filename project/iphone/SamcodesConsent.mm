@@ -3,6 +3,8 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <UIKit/UIKit.h>
 
+#import "PersonalizedAdConsent.h"
+
 #include "SamcodesConsent.h"
 
 extern "C" void sendConsentUpdateEvent(const char* type, const char* error, int consent);
