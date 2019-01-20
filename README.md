@@ -58,8 +58,8 @@ Consent.requestConsentForm("https://www.samcodes.co.uk", personalizedAdsOption, 
 Remember to record the consent response from the onConsentFormClosed callback to savedata (or whatever is appropriate) so you don't have to show the form every time.
 
 ### Notes
-
-  * Refer to the official [Google Mobile Ads Consent SDK](https://github.com/googleads/googleads-consent-sdk-android) documentation.
-  * Use ```#if (android || ios)``` conditionals around your imports and calls to this library for cross platform projects - there is no stub/fallback implementation included in the haxelib.
-  * If you need to rebuild the iOS or simulator ndlls, navigate to ```/project``` and run ```rebuild_ndlls.sh```.
-  * Got an idea or suggestion? Open an issue on GitHub, or send Sam a message on [Twitter](https://twitter.com/Sam_Twidale).
+ * On iOS you have to drag-drop the consent form from the PersonalizedAdConsent bundle into your Xcode project. I could not find a way to automate that - see this [thread from the OpenFL forums](https://community.openfl.org/t/how-to-include-a-bundle-file-in-the-resources-folder-when-doing-a-extension-ios/916).
+ * Refer to the official [Google Mobile Ads Consent SDK](https://github.com/googleads/googleads-consent-sdk-android) documentation.
+ * Use ```#if (android || ios)``` conditionals around your imports and calls to this library for cross platform projects - there is no stub/fallback implementation included in the haxelib.
+ * If you need to rebuild the iOS or simulator ndlls, navigate to ```/project``` and run ```rebuild_ndlls.sh```.
+ * Got an idea or suggestion? Open an issue on GitHub, or send Sam a message on [Twitter](https://twitter.com/Sam_Twidale).

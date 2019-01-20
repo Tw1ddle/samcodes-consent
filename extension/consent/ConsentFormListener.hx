@@ -44,8 +44,8 @@ class ConsentFormListener {
 			error = Std.string (Reflect.field (inEvent, "error"));
 		}
 		
-		if(Reflect.hasField(inEvent, "prefersadfree")) {
-			userPrefersAdFree = cast (Reflect.field(inEvent, "prefersadfree"));
+		if(Reflect.hasField(inEvent, "userprefersadfree")) {
+			userPrefersAdFree = cast (Reflect.field(inEvent, "userprefersadfree"));
 		}
 		
 		switch(type) {

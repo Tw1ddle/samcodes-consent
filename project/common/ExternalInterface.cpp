@@ -15,150 +15,100 @@ using namespace samcodesconsent;
 
 #ifdef IPHONE
 
-AutoGCRoot* chartboostEventHandle = 0;
+AutoGCRoot* consentUpdateEventHandle = 0;
+AutoGCRoot* consentFormEventHandle = 0;
 
-void samcodeschartboost_init_chartboost(HxString appId, HxString appSignature)
+void samcodesconsent_set_consent_update_listener(value onEvent)
 {
-	initChartboost(appId.c_str(), appSignature.c_str());
-}
-DEFINE_PRIME2v(samcodeschartboost_init_chartboost);
-
-void samcodeschartboost_set_listener(value onEvent)
-{
-	if(chartboostEventHandle == 0) {
-		chartboostEventHandle = new AutoGCRoot(onEvent);
+	if(consentUpdateEventHandle == 0) {
+		consentUpdateEventHandle = new AutoGCRoot(onEvent);
 	} else {
-		chartboostEventHandle->set(onEvent);
+		consentUpdateEventHandle->set(onEvent);
 	}
 }
-DEFINE_PRIME1v(samcodeschartboost_set_listener);
+DEFINE_PRIME1v(samcodesconsent_set_consent_update_listener);
 
-void samcodeschartboost_show_interstitial(HxString location)
+void samcodesconsent_set_consent_form_listener(value onEvent)
 {
-	showInterstitial(location.c_str());
+	if(consentFormEventHandle == 0) {
+		consentFormEventHandle = new AutoGCRoot(onEvent);
+	} else {
+		consentFormEventHandle->set(onEvent);
+	}
 }
-DEFINE_PRIME1v(samcodeschartboost_show_interstitial);
+DEFINE_PRIME1v(samcodesconsent_set_consent_form_listener);
 
-void samcodeschartboost_cache_interstitial(HxString location)
+void samcodesconsent_request_status(HxString publisherId)
 {
-	cacheInterstitial(location.c_str());
+	requestStatus(publisherId);
 }
-DEFINE_PRIME1v(samcodeschartboost_cache_interstitial);
+DEFINE_PRIME1v(samcodesconsent_request_status);
 
-bool samcodeschartboost_has_interstitial(HxString location)
+void samcodesconsent_request_consent_form(HxString privacyPolicyUrl, bool personalizedAdsOption, bool nonPersonalizedAdsOption, bool adFreeOption)
 {
-	return hasInterstitial(location.c_str());
+	requestConsentForm(privacyPolicyUrl, personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
 }
-DEFINE_PRIME1(samcodeschartboost_has_interstitial);
+DEFINE_PRIME4v(samcodesconsent_request_consent_form);
 
-void samcodeschartboost_show_rewarded_video(HxString location)
+bool samcodesconsent_display_consent_form()
 {
-	showRewardedVideo(location.c_str());
+	displayConsentForm();
 }
-DEFINE_PRIME1v(samcodeschartboost_show_rewarded_video);
+DEFINE_PRIME0(samcodesconsent_display_consent_form);
 
-void samcodeschartboost_cache_rewarded_video(HxString location)
+bool samcodesconsent_is_request_location_in_eea_or_unknown()
 {
-	cacheRewardedVideo(location.c_str());
+	return isRequestLocationInEeaOrUnknown();
 }
-DEFINE_PRIME1v(samcodeschartboost_cache_rewarded_video);
+DEFINE_PRIME0(samcodesconsent_is_request_location_in_eea_or_unknown);
 
-bool samcodeschartboost_has_rewarded_video(HxString location)
+int samcodesconsent_get_consent_status()
 {
-	return hasRewardedVideo(location.c_str());
+	return getConsentStatus();
 }
-DEFINE_PRIME1(samcodeschartboost_has_rewarded_video);
+DEFINE_PRIME0(samcodesconsent_get_consent_status);
 
-bool samcodeschartboost_is_any_view_visible()
+void samcodesconsent_set_consent_status(int consent)
 {
-	return isAnyViewVisible();
+	setConsentStatus(consent);
 }
-DEFINE_PRIME0(samcodeschartboost_is_any_view_visible);
+DEFINE_PRIME1v(samcodesconsent_set_consent_status);
 
-void samcodeschartboost_set_custom_id(HxString id)
-{
-	setCustomId(id.c_str());
-}
-DEFINE_PRIME1v(samcodeschartboost_set_custom_id);
-
-HxString samcodeschartboost_get_custom_id()
-{
-	return HxString(getCustomId());
-}
-DEFINE_PRIME0(samcodeschartboost_get_custom_id);
-
-void samcodeschartboost_set_should_request_interstitials_in_first_session(bool shouldRequest)
-{
-	setShouldRequestInterstitialsInFirstSession(shouldRequest);
-}
-DEFINE_PRIME1v(samcodeschartboost_set_should_request_interstitials_in_first_session);
-
-bool samcodeschartboost_get_auto_cache_ads()
-{
-	return getAutoCacheAds();
-}
-DEFINE_PRIME0(samcodeschartboost_get_auto_cache_ads);
-
-void samcodeschartboost_set_auto_cache_ads(bool autoCache)
-{
-	setAutoCacheAds(autoCache);
-}
-DEFINE_PRIME1v(samcodeschartboost_set_auto_cache_ads);
-
-void samcodeschartboost_set_should_prefetch_video_content(bool shouldPrefetch)
-{
-	setShouldPrefetchVideoContent(shouldPrefetch);
-}
-DEFINE_PRIME1v(samcodeschartboost_set_should_prefetch_video_content);
-
-HxString samcodeschartboost_get_sdk_version()
-{
-	return HxString(getSDKVersion());
-}
-DEFINE_PRIME0(samcodeschartboost_get_sdk_version);
-
-void samcodeschartboost_set_status_bar_behavior(bool shouldHide)
-{
-	setStatusBarBehavior(shouldHide);
-}
-DEFINE_PRIME1v(samcodeschartboost_set_status_bar_behavior);
-
-void samcodeschartboost_set_muted(bool mute)
-{
-	setMuted(mute);
-}
-DEFINE_PRIME1v(samcodeschartboost_set_muted);
-
-void samcodeschartboost_restrict_data_collection(bool shouldRestrict)
-{
-	restrictDataCollection(shouldRestrict);
-}
-DEFINE_PRIME1v(samcodeschartboost_restrict_data_collection);
-
-extern "C" void samcodeschartboost_main()
+extern "C" void samcodesconsent_main()
 {
 }
-DEFINE_ENTRY_POINT(samcodeschartboost_main);
+DEFINE_ENTRY_POINT(samcodesconsent_main);
 
-extern "C" int samcodeschartboost_register_prims()
+extern "C" int samcodesconsent_register_prims()
 {
 	return 0;
 }
 
-extern "C" void sendChartboostEvent(const char* type, const char* location, const char* uri, int reward_coins, int error, bool status)
+extern "C" void sendConsentUpdateEvent(const char* type, const char* error, int consent)
 {
-	if(chartboostEventHandle == 0)
+	if(consentUpdateEventHandle == 0)
 	{
 		return;
 	}
 	value o = alloc_empty_object();
 	alloc_field(o, val_id("type"), alloc_string(type));
-	alloc_field(o, val_id("location"), alloc_string(location));
-	alloc_field(o, val_id("uri"), alloc_string(uri));
-	alloc_field(o, val_id("reward_coins"), alloc_int(reward_coins));
-	alloc_field(o, val_id("error"), alloc_int(error));
-	alloc_field(o, val_id("status"), alloc_bool(status));
-	val_call1(chartboostEventHandle->get(), o);
+	alloc_field(o, val_id("error"), alloc_string(error));
+	alloc_field(o, val_id("consent"), alloc_int(consent));
+	val_call1(consentUpdateEventHandle->get(), o);
+}
+
+extern "C" void sendConsentFormEvent(const char* type, const char* error, int consent, bool userPrefersAdFree)
+{
+	if(consentFormEventHandle == 0)
+	{
+		return;
+	}
+	value o = alloc_empty_object();
+	alloc_field(o, val_id("type"), alloc_string(type));
+	alloc_field(o, val_id("error"), alloc_string(error));
+	alloc_field(o, val_id("consent"), alloc_int(consent));
+	alloc_field(o, val_id("userprefersadfree"), alloc_bool(userPrefersAdFree));
+	val_call1(consentFormEventHandle->get(), o);
 }
 
 #endif

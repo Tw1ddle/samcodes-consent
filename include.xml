@@ -3,16 +3,7 @@
 	<ndll name="samcodesconsent" if="ios" />
 
 	<section if="ios">
-		<dependency path="project/include/Chartboost.framework" />
-		<dependency path="project/include/CHAMoatMobileAppKit.framework" />
-		
-		<dependency name="AVFoundation.framework" />
-		<dependency name="CoreGraphics.framework" />
-		<dependency name="Foundation.framework" />
-		<dependency name="Security.framework" />
-		<dependency name="StoreKit.framework" />
-		<dependency name="UIKit.framework" />
-		<dependency name="WebKit.framework" />
+		<!-- The consent page HTML needs to be manually drag-dropped into the Xcode project, including it as a dependency didn't work when I tried that... -->
 	</section>
 	
 	<section if="android">

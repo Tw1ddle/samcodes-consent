@@ -9,7 +9,7 @@
 	<files id="iphone">
 		<compilerflag value="-IiPhone/include"/>
 		<compilerflag value="-Iinclude"/>
-		<compilerflag value="-Iinclude/Chartboost.framework/Versions/A/Headers" />
+		<compilerflag value="-Iinclude/PersonalizedAdConsent" />
 		
 		<file name="iphone/SamcodesConsent.mm"/>
 	</files>
