@@ -40,13 +40,13 @@ DEFINE_PRIME1v(samcodesconsent_set_consent_form_listener);
 
 void samcodesconsent_request_status(HxString publisherId)
 {
-	requestStatus(publisherId);
+	requestStatus(publisherId.c_str());
 }
 DEFINE_PRIME1v(samcodesconsent_request_status);
 
 void samcodesconsent_request_consent_form(HxString privacyPolicyUrl, bool personalizedAdsOption, bool nonPersonalizedAdsOption, bool adFreeOption)
 {
-	requestConsentForm(privacyPolicyUrl, personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
+	requestConsentForm(privacyPolicyUrl.c_str(), personalizedAdsOption, nonPersonalizedAdsOption, adFreeOption);
 }
 DEFINE_PRIME4v(samcodesconsent_request_consent_form);
 

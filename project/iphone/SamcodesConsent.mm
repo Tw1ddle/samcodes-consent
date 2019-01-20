@@ -8,6 +8,8 @@
 extern "C" void sendConsentUpdateEvent(const char* type, const char* error, int consent);
 extern "C" void sendConsentFormEvent(const char* type, const char* error, int consent, bool userPrefersAdFree);
 
+PACConsentForm* sharedConsentForm = NULL;
+
 void queueConsentUpdateEvent(const char* type, const char* error, int consent)
 {
 	[[NSOperationQueue mainQueue] addOperationWithBlock:^ {
@@ -22,66 +24,119 @@ void queueConsentFormEvent(const char* type, const char* error, int consent, boo
 	}];
 }
 
-// TODO
-
-@interface MyChartboostDelegate : NSObject<ChartboostDelegate>
-@end
-
-@implementation MyChartboostDelegate
-
-// Called before requesting an interstitial via the Chartboost API server.
-- (BOOL)shouldRequestInterstitial:(CBLocation)location
+// Note this mirrors an enum abstract in the Haxe code, be sure to check this hasn't changed if using a newer consent SDK
+int consentStatusToInt(PACConsentStatus consentStatus)
 {
-	queueChartboostEvent("shouldRequestInterstitial", [location cStringUsingEncoding:[NSString defaultCStringEncoding]], "", 0, -1, false);
-
-	return YES;
+	return (int)(currentConsent);
 }
-
-// Called before an interstitial will be displayed on the screen.
-- (BOOL)shouldDisplayInterstitial:(CBLocation)location
+PacConsentStatus intToConsentStatus(int consentStatus)
 {
-	queueChartboostEvent("shouldDisplayInterstitial", [location cStringUsingEncoding:[NSString defaultCStringEncoding]], "", 0, -1, false);
-
-	return YES;
+	PacConsentStatus s = (PacConsentStatus)(consentStatus);
+	return s;
 }
-
-// Called after an interstitial has been displayed on the screen.
-- (void)didDisplayInterstitial:(CBLocation)location
-{
-	queueChartboostEvent("didDisplayInterstitial", [location cStringUsingEncoding:[NSString defaultCStringEncoding]], "", 0, -1, false);
-}
-
-@end
 
 namespace samcodesconsent
 {
 	void requestStatus(const char* publisherId)
 	{
-		// TODO
+		NSLog(@"Will request GDPR consent status");
+		
+		[PACConsentInformation.sharedInstance
+			NSString publisherId = [[NSString alloc] initWithUTF8String:publisherId];
+			NSArray* publisherIds = [NSArray arrayWithObjects:publisherId, nil];
+			
+			requestConsentInfoUpdateForPublisherIdentifiers:publisherIds
+				completionHandler:^(NSError *_Nullable error) {
+					if (!error) {
+						// Consent info update succeeded. The shared PACConsentInformation instance has been updated.
+						PACConsentStatus c = PACConsentInformation.sharedInstance.consentStatus;
+						int consentValue = consentStatusToInt(c);
+						queueConsentUpdateEvent("onConsentInfoUpdated", "", consentValue);
+					} else {
+						// Consent info update failed.
+						NSString* errorDescription = [NSError localizedDescription];
+						queueConsentUpdateEvent("onFailedToUpdateConsentInfo", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0);
+					}
+				}
+		];
 	}
 	
 	void requestConsentForm(const char* privacyUrl, bool personalizedAdsOption, bool nonPersonalizedAdsOption, bool adFreeOption)
 	{
-		// TODO
+		NSLog(@"Will request GDPR consent form");
+		
+		NSString* privacyUrlString = [NSString stringWithUTF8String:privacyUrl];
+		NSURL* privacyURL = [NSURL URLWithString:privacyUrlString];
+		
+		sharedConsentForm = [[PACConsentForm alloc] initWithApplicationPrivacyPolicyURL:privacyURL];
+		
+		sharedConsentForm.shouldOfferPersonalizedAds = personalizedAdsOption ? YES : NO;
+		sharedConsentForm.shouldOfferNonPersonalizedAds = nonPersonalizedAdsOption ? YES : NO;
+		sharedConsentForm.shouldOfferAdFree = adFreeOption ? YES : NO;
+		
+		[sharedConsentForm loadWithCompletionHandler:^(NSError *_Nullable error) {
+			NSLog(@"Load complete. Error: %@", error);
+			if (!error) {
+				// Load successful.
+				queueConsentFormEvent("onConsentFormLoaded", "", 0, false);
+			} else {
+				// Report error.
+				NSString* errorDescription = [NSError localizedDescription];
+				queueConsentFormEvent("onConsentFormError", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0, false);
+			}
+		}];
 	}
 	
 	bool displayConsentForm()
 	{
-		// TODO
+		NSLog(@"Will display GDPR consent form");
+		
+		ViewController* rvc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+		
+		if(rvc == NULL) {
+			NSLog(@"Will fail to display consent form, couldn't get root view controller");
+			return false;
+		}
+		
+		if(sharedConsentForm == NULL) {
+			NSLog(@"Will fail to display consent form, it was NULL. Perhaps requestConsentForm didn't complete successfully.");
+			return false;
+		}
+		
+		// Note this isn't quite when the form is opened, but there doesn't seem to be a better place to put this...
+		queueConsentFormEvent("onConsentFormOpened", "", 0, false);
+		
+		[sharedConsentForm presentFromViewController:rvc
+			dismissCompletion:^(NSError *_Nullable error, BOOL userPrefersAdFree) {
+				NSLog(@"Did dismiss GDPR consent form");
+				
+				if (!error) {
+					// Check the user's consent choice.
+					PACConsentStatus c = PACConsentInformation.sharedInstance.consentStatus;
+					int consentValue = consentStatusToInt(c);
+					queueConsentFormEvent("onConsentFormClosed", "", consentValue, false);
+				} else {
+					// Handle error.
+					NSString* errorDescription = [NSError localizedDescription];
+					queueConsentFormEvent("onConsentFormError", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0, false);
+				}
+		}];
+		
+		return true;
 	}
 	
 	bool function isRequestLocationInEeaOrUnknown()
 	{
-		// TODO
+		return PACConsentInformation.sharedInstance.isRequestLocationInEeaOrUnknown();
 	}
 	
 	int getConsentStatus()
 	{
-		// TODO
+		return consentStatusToInt(PACConsentInformation.sharedInstance.consentStatus());
 	}
 	
 	void setConsentStatus(int consentStatus)
 	{
-		// TODO
+		PACConsentInformation.sharedInstance.setConsentStatus(intToConsentStatus(consentStatus));
 	}
 }
