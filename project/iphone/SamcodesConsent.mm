@@ -29,7 +29,7 @@ void queueConsentFormEvent(const char* type, const char* error, int consent, boo
 // Note this mirrors an enum abstract in the Haxe code, be sure to check this hasn't changed if using a newer consent SDK
 int consentStatusToInt(PACConsentStatus consentStatus)
 {
-	return (int)(currentConsent);
+	return (int)(consentStatus);
 }
 PACConsentStatus intToConsentStatus(int consentStatus)
 {
@@ -43,23 +43,22 @@ namespace samcodesconsent
 	{
 		NSLog(@"Will request GDPR consent status");
 		
-		[PACConsentInformation.sharedInstance
-			NSString* publisherId = [[NSString alloc] initWithUTF8String:publisherId];
-			NSArray* publisherIds = [NSArray arrayWithObjects:publisherId, nil];
-			
-			requestConsentInfoUpdateForPublisherIdentifiers:publisherIds
-				completionHandler:^(NSError *_Nullable error) {
-					if (!error) {
-						// Consent info update succeeded. The shared PACConsentInformation instance has been updated.
-						PACConsentStatus c = PACConsentInformation.sharedInstance.consentStatus;
-						int consentValue = consentStatusToInt(c);
-						queueConsentUpdateEvent("onConsentInfoUpdated", "", consentValue);
-					} else {
-						// Consent info update failed.
-						NSString* errorDescription = [error localizedDescription];
-						queueConsentUpdateEvent("onFailedToUpdateConsentInfo", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0);
-					}
+		NSString* publisherId = [NSString stringWithUTF8String:publisherId];
+		NSArray<NSString*>* publisherIds = [NSArray arrayWithObjects:publisherId, nil];
+		
+		[PACConsentInformation.sharedInstance requestConsentInfoUpdateForPublisherIdentifiers:publisherIds
+			completionHandler:^(NSError *_Nullable error) {
+				if (!error) {
+					// Consent info update succeeded. The shared PACConsentInformation instance has been updated.
+					PACConsentStatus c = PACConsentInformation.sharedInstance.consentStatus;
+					int consentValue = consentStatusToInt(c);
+					queueConsentUpdateEvent("onConsentInfoUpdated", "", consentValue);
+				} else {
+					// Consent info update failed.
+					NSString* errorDescription = [error localizedDescription];
+					queueConsentUpdateEvent("onFailedToUpdateConsentInfo", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0);
 				}
+			}
 		];
 	}
 	
@@ -129,16 +128,17 @@ namespace samcodesconsent
 	
 	bool isRequestLocationInEeaOrUnknown()
 	{
-		return PACConsentInformation.sharedInstance.isRequestLocationInEEAOrUnknown();
+		return [PACConsentInformation.sharedInstance isRequestLocationInEEAOrUnknown];
 	}
 	
 	int getConsentStatus()
 	{
-		return consentStatusToInt(PACConsentInformation.sharedInstance.consentStatus());
+		return consentStatusToInt([PACConsentInformation.sharedInstance consentStatus]);
 	}
 	
 	void setConsentStatus(int consentStatus)
 	{
-		PACConsentInformation.sharedInstance.setConsentStatus(intToConsentStatus(consentStatus));
+		PACConsentStatus c = intToConsentStatus(consentStatus);
+		[PACConsentInformation.sharedInstance setConsentStatus:c];
 	}
 }
