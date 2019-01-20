@@ -15,7 +15,6 @@ class ConsentUpdateListener {
 	
 	// NOTE there are far better ways of doing this
 	#if ios
-	// Interstitial events
 	private static inline var ON_CONSENT_INFO_UPDATED:String = "onConsentInfoUpdated";
 	private static inline var ON_FAILED_TO_UPDATE_CONSENT_INFO:String = "onFailedToUpdateConsentInfo";
 	
