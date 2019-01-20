@@ -20,7 +20,7 @@ void queueConsentUpdateEvent(const char* type, const char* error, int consent)
 void queueConsentFormEvent(const char* type, const char* error, int consent, bool userPrefersAdFree)
 {
 	[[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-		sendConsentFormEvent(type, error, consent, userPreferAdFree);
+		sendConsentFormEvent(type, error, consent, userPrefersAdFree);
 	}];
 }
 
@@ -91,7 +91,7 @@ namespace samcodesconsent
 	{
 		NSLog(@"Will display GDPR consent form");
 		
-		ViewController* rvc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+		UIViewController* rvc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
 		
 		if(rvc == NULL) {
 			NSLog(@"Will fail to display consent form, couldn't get root view controller");
@@ -125,7 +125,7 @@ namespace samcodesconsent
 		return true;
 	}
 	
-	bool function isRequestLocationInEeaOrUnknown()
+	bool isRequestLocationInEeaOrUnknown()
 	{
 		return PACConsentInformation.sharedInstance.isRequestLocationInEeaOrUnknown();
 	}
