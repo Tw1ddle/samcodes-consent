@@ -43,8 +43,8 @@ namespace samcodesconsent
 	{
 		NSLog(@"Will request GDPR consent status");
 		
-		NSString* publisherId = [NSString stringWithUTF8String:publisherId];
-		NSArray<NSString*>* publisherIds = [NSArray arrayWithObjects:publisherId, nil];
+		NSString* nsPublisherId = [NSString stringWithUTF8String:publisherId];
+		NSArray<NSString*>* publisherIds = [NSArray arrayWithObjects:nsPublisherId, nil];
 		
 		[PACConsentInformation.sharedInstance requestConsentInfoUpdateForPublisherIdentifiers:publisherIds
 			completionHandler:^(NSError *_Nullable error) {
