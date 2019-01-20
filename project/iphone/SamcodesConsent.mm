@@ -31,9 +31,9 @@ int consentStatusToInt(PACConsentStatus consentStatus)
 {
 	return (int)(currentConsent);
 }
-PacConsentStatus intToConsentStatus(int consentStatus)
+PACConsentStatus intToConsentStatus(int consentStatus)
 {
-	PacConsentStatus s = (PacConsentStatus)(consentStatus);
+	PACConsentStatus s = (PACConsentStatus)(consentStatus);
 	return s;
 }
 
@@ -44,7 +44,7 @@ namespace samcodesconsent
 		NSLog(@"Will request GDPR consent status");
 		
 		[PACConsentInformation.sharedInstance
-			NSString publisherId = [[NSString alloc] initWithUTF8String:publisherId];
+			NSString* publisherId = [[NSString alloc] initWithUTF8String:publisherId];
 			NSArray* publisherIds = [NSArray arrayWithObjects:publisherId, nil];
 			
 			requestConsentInfoUpdateForPublisherIdentifiers:publisherIds
@@ -56,7 +56,7 @@ namespace samcodesconsent
 						queueConsentUpdateEvent("onConsentInfoUpdated", "", consentValue);
 					} else {
 						// Consent info update failed.
-						NSString* errorDescription = [NSError localizedDescription];
+						NSString* errorDescription = [error localizedDescription];
 						queueConsentUpdateEvent("onFailedToUpdateConsentInfo", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0);
 					}
 				}
@@ -83,7 +83,7 @@ namespace samcodesconsent
 				queueConsentFormEvent("onConsentFormLoaded", "", 0, false);
 			} else {
 				// Report error.
-				NSString* errorDescription = [NSError localizedDescription];
+				NSString* errorDescription = [error localizedDescription];
 				queueConsentFormEvent("onConsentFormError", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0, false);
 			}
 		}];
@@ -119,7 +119,7 @@ namespace samcodesconsent
 					queueConsentFormEvent("onConsentFormClosed", "", consentValue, false);
 				} else {
 					// Handle error.
-					NSString* errorDescription = [NSError localizedDescription];
+					NSString* errorDescription = [error localizedDescription];
 					queueConsentFormEvent("onConsentFormError", [errorDescription cStringUsingEncoding:[NSString defaultCStringEncoding]], 0, false);
 				}
 		}];
@@ -129,7 +129,7 @@ namespace samcodesconsent
 	
 	bool isRequestLocationInEeaOrUnknown()
 	{
-		return PACConsentInformation.sharedInstance.isRequestLocationInEeaOrUnknown();
+		return PACConsentInformation.sharedInstance.isRequestLocationInEEAOrUnknown();
 	}
 	
 	int getConsentStatus()
