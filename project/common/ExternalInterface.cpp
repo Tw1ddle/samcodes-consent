@@ -52,7 +52,7 @@ DEFINE_PRIME4v(samcodesconsent_request_consent_form);
 
 bool samcodesconsent_display_consent_form()
 {
-	displayConsentForm();
+	return displayConsentForm();
 }
 DEFINE_PRIME0(samcodesconsent_display_consent_form);
 
