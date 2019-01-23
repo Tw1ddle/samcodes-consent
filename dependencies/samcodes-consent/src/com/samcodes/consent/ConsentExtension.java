@@ -35,6 +35,10 @@ public class ConsentExtension extends Extension
 		consentUpdateCallback = haxeCallback;
 	}
 	
+	public static int whatThreadIdIsThis() {
+		return Long.valueOf(Thread.currentThread().getId()).intValue();
+	}
+	
 	public static HaxeObject consentFormCallback = null;
 	public static void setConsentFormListener(HaxeObject haxeCallback) {
 		Log.i(TAG, "Setting Haxe GDPR consent form delegate object");
