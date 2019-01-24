@@ -5,7 +5,7 @@
 
 WORK IN PROGRESS
 
-Unofficial Google Mobile Ads Consent SDK bindings for Haxe OpenFL Android and iOS targets. See the demo app [here](https://github.com/Tw1ddle/samcodes-ads-demo).
+Unofficial Google Mobile Ads Consent SDK bindings for Haxe OpenFL Android and iOS targets. See the demo app [here](https://github.com/Tw1ddle/samcodes-consent-demo).
 
 ### Features
 
@@ -23,9 +23,9 @@ haxelib git samcodes-consent https://github.com/Tw1ddle/samcodes-consent
 
 ### Example
 
-See the [demo app](https://github.com/Tw1ddle/samcodes-ads-demo) for an example.
+See the [demo app](https://github.com/Tw1ddle/samcodes-consent-demo) for an example.
 
-![Screenshot of demo app](https://github.com/Tw1ddle/samcodes-ads-demo/blob/master/screenshots/consent-popup.png?raw=true "Demo app with consent popup")
+![Screenshot of demo app](https://github.com/Tw1ddle/samcodes-consent-demo/blob/master/screenshots/consent-popup.png?raw=true "Demo app with consent popup")
 
 ### Usage
 
@@ -36,7 +36,7 @@ Getting the user's current consent status:
 Consent.setConsentListener(new MyConsentListener());
 
 // Make the request to determine the status of a user's consent
-Consent.requestStatus("your-publisher-id-from-google-ads-dashboard");
+Consent.requestStatus("your-publisher-id-from-ads-dashboard");
 ```
 
 When we receive the current status, we can check if the request came from within the European Economic Area:
