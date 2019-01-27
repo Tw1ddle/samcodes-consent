@@ -42,7 +42,7 @@ Consent.requestStatus("your-publisher-id-from-ads-dashboard");
 When we receive the current status, we can check if the request came from within the European Economic Area:
 
 ```haxe
-// Note it is only safe to check this when or after the onConsentInfoUpdated callback triggers
+// Note this will only return a valid value after the onConsentInfoUpdated callback triggers
 if(!Consent.isRequestLocationInEeaOrUnknown()) {
     return; // There is no need to show a consent form to users outside EEA, and the SDK might not let you anyway
 }
@@ -65,6 +65,8 @@ Consent.requestConsentForm("https://www.samcodes.co.uk", personalizedAdsOption, 
 Finally record the consent response from the onConsentFormClosed callback to game saved data (or whatever is appropriate) so you don't have to show the form every time.
 
 ### Notes
+ * At time of writing, callbacks on Android run on the wrong thread due to an [issue in lime](https://github.com/openfl/lime/issues/983).
+ * At time of writing, the Consent SDK form shows lots of partner privacy policies that [may be irrelevant](https://github.com/googleads/googleads-consent-sdk-android/issues/81) to your app.
  * On iOS you have to drag-drop the consent form from the PersonalizedAdConsent bundle into your Xcode project. See this thread in the [OpenFL forums](https://community.openfl.org/t/how-to-include-a-bundle-file-in-the-resources-folder-when-doing-a-extension-ios/916).
  * Refer to the official Google Mobile Ads Consent SDK documentation for [Android](https://github.com/googleads/googleads-consent-sdk-android) and [iOS](https://developers.google.com/admob/ios/quick-start).
  * Use ```#if (android || ios)``` conditionals around your imports and calls to this library for cross platform projects - there is no stub/fallback implementation included in the haxelib.

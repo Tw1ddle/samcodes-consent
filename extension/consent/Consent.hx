@@ -53,17 +53,12 @@ class Consent {
 		set_consent_status(consent);
 	}
 	
-	public static function whatThreadIdIsThis():Int {
-		return what_thread_id_is_this();
-	}
-	
 	#if android
 	private static inline var packageName:String = "com/samcodes/consent/ConsentExtension";
 	private static inline function bindJNI(jniMethod:String, jniSignature:String) {
 		return JNI.createStaticMethod(packageName, jniMethod, jniSignature);
 	}
 	
-	private static var what_thread_id_is_this = bindJNI("whatThreadIdIsThis", "()I");
 	private static var set_consent_update_listener = bindJNI("setConsentUpdateListener", "(Lorg/haxe/lime/HaxeObject;)V");
 	private static var set_consent_form_listener = bindJNI("setConsentFormListener", "(Lorg/haxe/lime/HaxeObject;)V");
 	private static var request_status = bindJNI("requestStatus", "(Ljava/lang/String;)V");
