@@ -42,30 +42,35 @@ public class ConsentExtension extends Extension
 	}
 	
 	public static void requestStatus(String publisherId) {
-		ConsentInformation consentInformation = ConsentInformation.getInstance(Extension.mainActivity);
-		String[] publisherIds = { publisherId };
-		consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
-			public void callHaxe(final String name, final Object[] args) {
-				if(consentUpdateCallback != null) {
-					callbackHandler.post(new Runnable() {
-						public void run() {
-							Log.d(TAG, "Calling " + name + " from java");
-							consentUpdateCallback.call(name, args);
+		final ConsentInformation consentInformation = ConsentInformation.getInstance(Extension.mainActivity);
+		final String[] publisherIds = { publisherId };
+		
+		Extension.callbackHandler.post(new Runnable() {
+			@Override public void run() {
+				consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
+					public void callHaxe(final String name, final Object[] args) {
+						if(consentUpdateCallback != null) {
+							callbackHandler.post(new Runnable() {
+								public void run() {
+									Log.d(TAG, "Calling " + name + " from java");
+									consentUpdateCallback.call(name, args);
+								}
+							});
+						} else {
+							Log.w(TAG, "GDPR consent status listener object is null, ignored a GDPR consent callback");
 						}
-					});
-				} else {
-					Log.w(TAG, "GDPR consent status listener object is null, ignored a GDPR consent callback");
-				}
-			}
-			
-			@Override
-			public void onConsentInfoUpdated(ConsentStatus consentStatus) {
-				callHaxe("onConsentInfoUpdated", new Object[] {consentStatus}); // User's consent status successfully updated.
-			}
-			
-			@Override
-			public void onFailedToUpdateConsentInfo(String errorDescription) {
-				callHaxe("onFailedToUpdateConsentInfo", new Object[] {errorDescription}); // User's consent status failed to update.
+					}
+					
+					@Override
+					public void onConsentInfoUpdated(ConsentStatus consentStatus) {
+						callHaxe("onConsentInfoUpdated", new Object[] {consentStatus}); // User's consent status successfully updated.
+					}
+					
+					@Override
+					public void onFailedToUpdateConsentInfo(String errorDescription) {
+						callHaxe("onFailedToUpdateConsentInfo", new Object[] {errorDescription}); // User's consent status failed to update.
+					}
+				});
 			}
 		});
 	}
@@ -76,11 +81,11 @@ public class ConsentExtension extends Extension
 		try {
 			privacyUrlObj = new URL(privacyUrl);
 		} catch(MalformedURLException e) {
-			Log.e(TAG, "Malformed URL exception, passed a bad privacy URL, will fail to display consent form");
+			Log.e(TAG, "Malformed URL exception, passed a bad privacy URL, will fail to display consent form: " + e.getMessage());
 			return;
 		}
 		
-		ConsentForm.Builder builder = new ConsentForm.Builder(Extension.mainActivity, privacyUrlObj).withListener(new ConsentFormListener() {
+		final ConsentForm.Builder builder = new ConsentForm.Builder(Extension.mainActivity, privacyUrlObj).withListener(new ConsentFormListener() {
 			public void callHaxe(final String name, final Object[] args) {
 				if(consentFormCallback != null) {
 					callbackHandler.post(new Runnable() {
@@ -114,8 +119,6 @@ public class ConsentExtension extends Extension
 				boolean prefersAdFree = Boolean.TRUE.equals(userPrefersAdFree);
 				
 				callHaxe("onConsentFormClosed", new Object[] { consent, userPrefersAdFree });
-				
-				setConsentStatus(consentToInt(consentStatus));
 			}
 			
 			@Override
@@ -134,16 +137,20 @@ public class ConsentExtension extends Extension
 			builder.withAdFreeOption();
 		}
 		
-		try {
-			consentForm = builder.build();
-			if(consentForm != null) {
-				consentForm.load();
-			} else {
-				Log.e(TAG, "Failed to build the consent form");
+		Extension.callbackHandler.post(new Runnable() {
+			@Override public void run() {
+				try {
+					consentForm = builder.build();
+					if(consentForm != null) {
+						consentForm.load();
+					} else {
+						Log.e(TAG, "Failed to build the consent form");
+					}
+				} catch(Exception e) {
+					Log.e(TAG, "Something went wrong when building or loading the consent form: " + e.getMessage());
+				}
 			}
-		} catch(Exception e) {
-			Log.e(TAG, "Something went wrong when building or loading the consent form");
-		}
+		});
 	}
 	
 	public static boolean displayConsentForm() {
@@ -152,12 +159,16 @@ public class ConsentExtension extends Extension
 			return false;
 		}
 		
-		try {
-			consentForm.show();
-		} catch(Exception e) {
-			Log.e(TAG, "Something went wrong when trying to show the consent form");
-			return false;
-		}
+		Extension.callbackHandler.post(new Runnable() {
+			@Override public void run() {
+				try {
+					consentForm.show();
+				} catch(Exception e) {
+					Log.e(TAG, "Something went wrong when trying to show the consent form: " + e.getMessage());
+				}
+			}
+		});
+		
 		return true;
 	}
 	

@@ -3,8 +3,6 @@
 [![Travis Build Status](https://img.shields.io/travis/Tw1ddle/samcodes-consent.svg?style=flat-square)](https://travis-ci.org/Tw1ddle/samcodes-consent)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://github.com/Tw1ddle/samcodes-consent/blob/master/LICENSE)
 
-WORK IN PROGRESS
-
 Unofficial Google Mobile Ads Consent SDK bindings for Haxe OpenFL Android and iOS targets. See the demo app [here](https://github.com/Tw1ddle/samcodes-consent-demo).
 
 ### Features
@@ -25,7 +23,7 @@ haxelib git samcodes-consent https://github.com/Tw1ddle/samcodes-consent
 
 See the [demo app](https://github.com/Tw1ddle/samcodes-consent-demo) for an example.
 
-![Screenshot of demo app](https://github.com/Tw1ddle/samcodes-consent-demo/blob/master/screenshots/consent-popup.png?raw=true "Demo app with consent popup")
+![Screenshot of demo app](https://github.com/Tw1ddle/samcodes-consent-demo/blob/master/screenshots/prerendered-consent-dialog.png?raw=true "Demo app with consent popup")
 
 ### Usage
 
