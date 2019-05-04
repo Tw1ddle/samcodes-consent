@@ -42,6 +42,8 @@ public class ConsentExtension extends Extension
 	}
 	
 	public static void requestStatus(String publisherId) {
+		Log.i(TAG, "Will request GDPR consent status");
+		
 		final ConsentInformation consentInformation = ConsentInformation.getInstance(Extension.mainActivity);
 		final String[] publisherIds = { publisherId };
 		
@@ -76,6 +78,8 @@ public class ConsentExtension extends Extension
 	}
 	
 	public static void requestConsentForm(String privacyUrl, boolean personalizedAdsOption, boolean nonPersonalizedAdsOption, boolean adFreeOption) {
+		Log.i(TAG, "Will request GDPR consent form");
+		
 		URL privacyUrlObj = null;
 		
 		try {
@@ -154,6 +158,8 @@ public class ConsentExtension extends Extension
 	}
 	
 	public static boolean displayConsentForm() {
+		Log.i(TAG, "Will attempt to display GDPR consent form");
+		
 		if(consentForm == null) {
 			Log.e(TAG, "Failed to display consent form. You must call requestConsentForm and wait to see if it loads first");
 			return false;
