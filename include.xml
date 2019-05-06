@@ -3,11 +3,13 @@
 	<ndll name="samcodesconsent" if="ios" />
 
 	<section if="ios">
-		<!-- The consent page HTML needs to be manually drag-dropped into the Xcode project, including it as a dependency didn't work when I tried that... -->
+		<!-- The consent page bundle needs to be manually drag-dropped into the Xcode project, including it as a dependency didn't work when I tried that... -->
 	</section>
 	
 	<section if="android">
+		<dependency name="consent-library" path="dependencies/googleads-consent-sdk-android/consent-library"/>
 		<dependency name="samcodes-consent" path="dependencies/samcodes-consent"/>
+		
 		<android extension="com.samcodes.consent.ConsentExtension" />
 	</section>
 </project>
