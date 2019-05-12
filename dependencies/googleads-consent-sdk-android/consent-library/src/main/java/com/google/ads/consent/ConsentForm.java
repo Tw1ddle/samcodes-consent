@@ -215,9 +215,14 @@ public class ConsentForm {
         return context.getApplicationInfo().loadLabel(context.getPackageManager()).toString();
     }
 
-    private static String getAppIconURIString(Context context) {
+    private static String getAppIconURIString(Context context) throws Exception {
         Drawable iconDrawable = context.getPackageManager().getApplicationIcon(context
             .getApplicationInfo());
+
+        if(iconDrawable.getIntrinsicWidth() <= 0 || iconDrawable.getIntrinsicHeight() <= 0) {
+            throw new Exception("Failed to get sensible app icon");
+        }
+
         Bitmap bitmap = Bitmap.createBitmap(iconDrawable.getIntrinsicWidth(),
             iconDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
@@ -240,7 +245,13 @@ public class ConsentForm {
     private void updateDialogContent(WebView webView) {
         HashMap <String, Object> formInfo = new HashMap < > ();
         formInfo.put("app_name", getApplicationName(context));
-        formInfo.put("app_icon", getAppIconURIString(context));
+
+        try {
+            formInfo.put("app_icon", getAppIconURIString(context));
+        } catch(Exception e) {
+            // Consent form just won't show an icon
+        }
+
         formInfo.put("offer_personalized", this.personalizedAdsOption);
         formInfo.put("offer_non_personalized", this.nonPersonalizedAdsOption);
         formInfo.put("offer_ad_free", this.adFreeOption);
