@@ -196,22 +196,22 @@ public class ConsentExtension extends Extension
 	
 	// These values correspond to an enum abstract in Haxe
 	private static int consentToInt(ConsentStatus consentStatus) {
-		int consent = -1;
+		int consent = 0;
 		if(consentStatus == ConsentStatus.UNKNOWN) {
-			consent = -1;
-		} else if(consentStatus == ConsentStatus.NON_PERSONALIZED) {
 			consent = 0;
-		} else if(consentStatus == ConsentStatus.PERSONALIZED) {
+		} else if(consentStatus == ConsentStatus.NON_PERSONALIZED) {
 			consent = 1;
+		} else if(consentStatus == ConsentStatus.PERSONALIZED) {
+			consent = 2;
 		}
 		return consent;
 	}
 	private static ConsentStatus intToConsent(int consent) {
-		if(consent == -1) {
+		if(consent == 0) {
 			return ConsentStatus.UNKNOWN;
-		} else if(consent == 0) {
-			return ConsentStatus.NON_PERSONALIZED;
 		} else if(consent == 1) {
+			return ConsentStatus.NON_PERSONALIZED;
+		} else if(consent == 2) {
 			return ConsentStatus.PERSONALIZED;
 		}
 		return ConsentStatus.UNKNOWN;

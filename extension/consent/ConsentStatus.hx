@@ -5,9 +5,9 @@ package extension.consent;
 **/
 @:enum abstract ConsentStatus(Int) from Int to Int
 {
-	var UNKNOWN = -1;
-	var NON_PERSONALIZED = 0;
-	var PERSONALIZED = 1;
+	var UNKNOWN = 0;
+	var NON_PERSONALIZED = 1;
+	var PERSONALIZED = 2;
 	
 	@:to public static function toString(pref:Int):String {
 		return switch(pref) {
