@@ -3,7 +3,11 @@
 	<ndll name="samcodesconsent" if="ios" />
 
 	<section if="ios">
-		<!-- The consent page bundle needs to be manually drag-dropped into the Xcode project, including it as a dependency didn't work when I tried that... -->
+        <!-- The consent library uses a WebKit webview and requires the advertising identifier -->
+        <dependency name="WebKit.framework" />
+        <dependency name="AdSupport.framework" />
+        
+		<!-- The consent page bundle also needs to be manually drag-dropped into the Xcode project, including it as a dependency didn't work when I tried that... -->
 	</section>
 	
 	<section if="android">
